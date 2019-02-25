@@ -17,3 +17,9 @@ end
 service 'tomcat' do
   action [:enable, :start]
 end
+
+remote_file '/var/lib/tomcat/webapps/openam.war' do
+  source "#{ENV['OPENAM_WAR_URI']}"
+
+  not_if { !ENV.has_key?('OPENAM_WAR_URI') }
+end
