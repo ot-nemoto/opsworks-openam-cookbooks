@@ -4,7 +4,15 @@ execute "yum-update" do
   action :run
 end
 
-package %w(git ruby-devel gcc gcc-c++ system-rpm-config zlib-devel libxml2-devel libxslt-devel mariadb mariadb-devel mariadb-server)
+package %w(git httpd ruby-devel gcc gcc-c++ system-rpm-config zlib-devel libxml2-devel libxslt-devel mariadb mariadb-devel mariadb-server)
+
+template '/etc/httpd/conf.d/sso-app.conf' do
+  source 'httpd/sso-app.erb'
+end
+
+service 'httpd' do
+  action [:enable, :start]
+end
 
 execute "ruby-install" do
   user "root"
@@ -19,24 +27,27 @@ service 'mariadb' do
   action [:enable, :start]
 end
 
-git "/root/sso-by-saml-sample-app" do
+git "/home/ec2-user/sso-by-saml-sample-app" do
   repository "https://github.com/ot-nemoto/sso-by-saml-sample-app.git"
+  user 'ec2-user'
   action :sync
 end
 
-template '/root/sso-by-saml-sample-app/.env' do
+template '/home/ec2-user/sso-by-saml-sample-app/.env' do
   source 'env.erb'
+  owner 'ec2-user'
+  group 'ec2-user'
 end
 
 execute "bundle-install" do
-  user "root"
+  user "ec2-user"
   command <<-EOH
-    sudo $(which bundle) config build.nokogiri --use-system-libraries && \
-    sudo $(which bundle) install --path vendor/bundle && \
-    sudo $(which bundle) exec rake db:create && \
-    sudo $(which bundle) exec rake db:migrate && \
-    sudo $(which bundle) exec rails s -b 0.0.0.0 -p 80 -d
+    bundle config build.nokogiri --use-system-libraries && \
+    bundle install --path vendor/bundle && \
+    bundle exec rake db:create && \
+    bundle exec rake db:migrate && \
+    bundle exec rails s -b 0.0.0.0 -d
   EOH
-  cwd '/root/sso-by-saml-sample-app'
+  cwd '/home/ec2-user/sso-by-saml-sample-app'
   action :run
 end
