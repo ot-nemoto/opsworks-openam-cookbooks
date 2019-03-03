@@ -31,11 +31,11 @@ end
 execute "bundle-install" do
   user "root"
   command <<-EOH
-    bundle config build.nokogiri --use-system-libraries && \
-    bundle install --force --path vendor/bundle && \
-    bundle exec rake db:create && \
-    bundle exec rake db:migrate && \
-    bundle exec rails s -b 0.0.0.0 -p 80 -d
+    sudo $(which bundle) config build.nokogiri --use-system-libraries && \
+    sudo $(which bundle) install --path vendor/bundle && \
+    sudo $(which bundle) exec rake db:create && \
+    sudo $(which bundle) exec rake db:migrate && \
+    sudo $(which bundle) exec rails s -b 0.0.0.0 -p 80 -d
   EOH
   cwd '/root/sso-by-saml-sample-app'
   action :run
