@@ -18,6 +18,7 @@ execute "ruby-install" do
   user "root"
   command <<-EOH
     amazon-linux-extras install -y ruby2.4 && \
+    gem update --system
     gem install bundler
   EOH
   action :run
