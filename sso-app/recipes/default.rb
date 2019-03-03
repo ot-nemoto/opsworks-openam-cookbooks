@@ -49,6 +49,9 @@ execute "bundle-install" do
     bundle exec rails s -b 0.0.0.0 -d
   EOH
   cwd '/home/ec2-user/sso-by-saml-sample-app'
-  environment ({'HOME' => '/home/ec2-user'})
+  environment ({
+    'HOME' => '/home/ec2-user',
+    'USER' => 'ec2-user'
+  })
   action :run
 end
