@@ -57,3 +57,18 @@ export ONELOGIN_APP_ID=<onelogin Application ID>
 # 実行
 chef-client -z -o 'recipe[sso-app::default]'
 ```
+
+Basic認証を追加する場合
+
+```sh
+cat << EOT > basicauth.json
+{
+  "basic_auth": [
+    { "name": "test01", "password": "password01" }
+  ]
+}
+EOT
+
+# 実行
+chef-client -z -o 'recipe[sso-app::default]' -j basicauth.json
+```

@@ -10,6 +10,21 @@ template '/etc/httpd/conf.d/sso-app.conf' do
   source 'httpd/sso-app.erb'
 end
 
+# BasicAuth
+template '/etc/httpd/conf.d/basic-auth.conf' do
+  source 'httpd/basic-auth.conf.erb'
+end unless node['basic_auth'].nil?
+
+file '/etc/httpd/conf/.htpasswd' do
+  content lazy {
+    f = Chef::Util::FileEdit.new(File.file?(path) ? path : '/dev/null')
+    node['basic_auth'].each do |user|
+      f.insert_line_if_no_match(/^#{user.name}:/, "#{user.name}:#{user.password.crypt('salt')}\n")
+    end
+    f.send(:editor).lines.join
+  }
+end unless node['basic_auth'].nil?
+
 service 'httpd' do
   action [:enable, :start]
 end
