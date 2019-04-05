@@ -1,6 +1,8 @@
 # opsworks-openam-cookbooks
 
-### Chef
+## Getting Started
+
+**Chef Install**
 
 ```sh
 curl -L https://omnitruck.chef.io/install.sh | sudo bash -s -- -v 12.18.31
@@ -8,20 +10,20 @@ chef-client -v
   # Chef: 12.18.31
 ```
 
-### Git
+**Git Install**
 
 ```sh
 sudo yum -y install git
 ```
 
-### opsworks-openam
+**Cookbooks Download**
 
 ```sh
 git clone https://github.com/ot-nemoto/opsworks-openam.git cookbooks
 cd cookbooks
 ```
 
-### openam
+## OpenAM
 
 - ダウンロード可能な環境に `OpenAM-13.0.0.war` を配置
 - `OpenAM-13.0.0.war` は https://backstage.forgerock.com/downloads/browse/am/archive からダウンロード可能(要アカウント登録)
@@ -33,7 +35,21 @@ export OPENAM_WAR_URI=https://example.com/OpenAM-13.0.0.war
 chef-client -z -o 'recipe[openam::default]'
 ```
 
-### sso-app
+## OpenDJ
+
+- ダウンロード可能な環境に `opendj-3.0.0-1.noarch.rpm` を配置
+- `opendj-3.0.0-1.noarch.rpm` は https://backstage.forgerock.com/downloads/browse/ds/archive からダウンロード可能(要アカウント登録)
+
+```sh
+export OPENDJ_RPM_URI=https://example.com/opendj-3.0.0-1.noarch.rpm
+export ROOT_PW=secret
+export BASE_DN=dc=example,dc=com
+
+# 実行
+chef-client -z -o 'recipe[opendj::default]'
+```
+
+## sso-app
 
 ```sh
 export DEVISE_DEFAULT_URL_OPTIONS=$(curl -s http://169.254.169.254/latest/meta-data/public-hostname)
